@@ -119,6 +119,7 @@ public extension UIImageView {
                      contentMode: ContentMode = .scaleAspectFit,
                      cornerRadius: CGFloat = 0) {
         self.init(image: image)
+        self.backgroundColor = backgroundColor
         self.contentMode = contentMode
         if cornerRadius > 0 {
             self.layer.cornerRadius = cornerRadius

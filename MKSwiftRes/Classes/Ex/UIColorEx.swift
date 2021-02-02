@@ -3,7 +3,7 @@ import UIKit
 
 // MARK: - 颜色配置
 public extension UIColor {
-    static var theme = UIColor.init(0xB18264)
+    static var theme = UIColor.table_bg
     static let black_l1 = UIColor.for(light: .init(0x000000), dark: .init(0x999999))
     /// viewcontroller背景颜色，浅色模式0xffffff，暗黑模式0x000000
     static let vc_bg = UIColor.for(light: .init(0xffffff), dark: .init(0x000000))
@@ -62,6 +62,15 @@ public extension UIColor {
         } else {
             return light
         }
+    }
+    
+    /// 随机颜色
+    class var random: UIColor {
+        return
+            UIColor.init(red: CGFloat(arc4random_uniform(255)) / (255.0),
+                         green: CGFloat(arc4random_uniform(255)) / 255.0,
+                         blue: CGFloat(arc4random_uniform(255)) / 255.0,
+                         alpha: 1)
     }
 }
 
