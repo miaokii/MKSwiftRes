@@ -35,9 +35,17 @@ open class MKPopViewController: UIViewController {
     /// 是否正在显示
     public var isShow: Bool { return _isShow }
     /// 展示动画时间
-    public var presentDuration: TimeInterval = 0.5
+    public var presentDuration: TimeInterval = 0.5 {
+        didSet {
+            animatedTransition.presentDuration = presentDuration
+        }
+    }
     /// 消失动画时间
-    public var dismissDuration: TimeInterval = 0.3
+    public var dismissDuration: TimeInterval = 0.3 {
+        didSet {
+            animatedTransition.dismissDuration = dismissDuration
+        }
+    }
     /// 高度
     public var contentHeight: CGFloat = 200
     /// 宽度
@@ -71,6 +79,7 @@ open class MKPopViewController: UIViewController {
     private var _isShow = false
     private var presentComplete: (()->Void)?
     private var dismissComplete: (()->Void)?
+    private var _backgroundColor: UIColor?
 
     override public init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         super.init(nibName: nil, bundle: nil)
@@ -113,21 +122,23 @@ open class MKPopViewController: UIViewController {
         }
         
         animatedTransition.presentingClosure = { [unowned self] in
-            self.poping()
+            self.inPoping()
         }
         
-        animatedTransition.endPresentedClosure = {
-            self.presentComplete?()
-            self._isShow = true
+        animatedTransition.endPresentedClosure = { [unowned self] in
+            self.endPoping()
+        }
+        
+        animatedTransition.beforeDismissClosure = { [unowned self] in
+            self.beforeHide()
         }
         
         animatedTransition.dismissingClosure = { [unowned self] in
-            self.hideing()
+            self.inHiding()
         }
         
         animatedTransition.dismissedClosure = { [unowned self] in
-            self._isShow = false
-            self.dismissComplete?()
+            self.endHiding()
         }
         
         animatedTransition.presentDuration = presentDuration
@@ -167,7 +178,6 @@ open class MKPopViewController: UIViewController {
     // MARK: - 显示与隐藏
     /// 显示
     open func show(on vc: UIViewController? = nil, complete: (()->Void)? = nil) {
-        _isShow = true
         presentComplete = complete
         if let vc = vc {
             vc.present(self, animated: true, completion: nil)
@@ -187,6 +197,7 @@ open class MKPopViewController: UIViewController {
     // MARK: - 状态设置
     /// 执行弹出之前的状态
     open func beforePop() {
+        _backgroundColor = view.backgroundColor
         switch popStyle {
         case .center:
             contentView.alpha = 0
@@ -203,10 +214,14 @@ open class MKPopViewController: UIViewController {
         case .custom:
             break
         }
+        // 由clear向_backgroundColor渐变动画
+        if popStyle != .custom {
+            view.backgroundColor = .clear
+        }
     }
     
     /// 弹出后的状态
-    open func poping() {
+    open func inPoping() {
         switch popStyle {
         case .center:
             contentView.alpha = 1
@@ -214,10 +229,24 @@ open class MKPopViewController: UIViewController {
         default:
             contentView.transform = .identity
         }
+        if popStyle != .custom {
+            view.backgroundColor = _backgroundColor
+        }
+    }
+    
+    /// 弹出结束
+    open func endPoping() {
+        self._isShow = true
+        self.presentComplete?()
+    }
+    
+    /// 隐藏前
+    open func beforeHide() {
+        
     }
     
     /// 隐藏后的状态
-    open func hideing() {
+    open func inHiding() {
         switch popStyle {
         case .center:
             contentView.alpha = 0
@@ -227,6 +256,18 @@ open class MKPopViewController: UIViewController {
         default:
             beforePop()
         }
+        if popStyle != .custom {
+            view.alpha = 0
+        }
+    }
+    
+    /// 隐藏结束
+    open func endHiding() {
+        if popStyle != .custom {
+            view.alpha = 1
+        }
+        self._isShow = false
+        self.dismissComplete?()
     }
 }
 
@@ -292,6 +333,9 @@ fileprivate class PopAnimatedTransition:NSObject, UIViewControllerAnimatedTransi
     /// 展示结束
     var endPresentedClosure: (()->Void)?
     
+    /// 取消前
+    var beforeDismissClosure: (()->Void)?
+    
     /// 取消展示
     var dismissingClosure: (()->Void)?
     
@@ -318,37 +362,34 @@ fileprivate class PopAnimatedTransition:NSObject, UIViewControllerAnimatedTransi
         let animateContainer = transitionContext.containerView
         
         if !isPresent {
+            beforeDismissClosure?()
             UIView.animate(withDuration: transitionDuration(using: transitionContext),
                            delay: 0,
                            usingSpringWithDamping: 1,
                            initialSpringVelocity: 0,
                            options: .curveEaseOut) {
-                formView.alpha = 0
                 self.dismissingClosure?()
             } completion: { (_) in
                 self.dismissedClosure?()
-                transitionContext.completeTransition(true)
+                transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
             }
         } else {
             /// 添加toView到animateContainer
             animateContainer.addSubview(toView)
             animateContainer.bringSubviewToFront(formView)
             
-            let toViewColor = toView.backgroundColor
-            toView.backgroundColor = .clear
             beforePresentClosure?()
             UIView.animate(withDuration: transitionDuration(using: transitionContext),
                            delay: 0,
                            usingSpringWithDamping: 1,
                            initialSpringVelocity: 0,
                            options: .curveLinear) {
-                toView.backgroundColor = toViewColor
                 self.presentingClosure?()
             } completion: { (_) in
-                /// 在非交互转场中，动画结束之后需要执行transitionContext.completeTransition(true)（如果动画被取消，传NO）
+                /// 在非交互转场中，动画结束之后需要执行transitionContext.completeTransition(!transitionContext.transitionWasCancelled)（如果动画被取消，传NO）
                 /// 在interactive交互转场中，动画是否结束是由外界控制的（用户行为或者特定函数），需要在外部调用
                 self.endPresentedClosure?()
-                transitionContext.completeTransition(true)
+                transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
             }
         }
     }

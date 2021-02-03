@@ -94,7 +94,7 @@ public extension UIButton {
     }
     
     static func themeBorderBtn(super view: UIView?,
-                               title: String = "",
+                               title: String,
                                font: UIFont = .systemFont(ofSize: 16),
                                borderWidth: CGFloat = 1,
                                borderColor: UIColor = .theme,

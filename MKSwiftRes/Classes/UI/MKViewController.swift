@@ -14,7 +14,6 @@ open class MKViewController: UIViewController {
 
         view.backgroundColor = .view_l1
     }
-    
 
     open func popOrDismiss() {
         if let _ = self.presentingViewController {
