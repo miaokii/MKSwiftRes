@@ -9,26 +9,25 @@ import Foundation
 // 格式化金额
 public extension String {
     
-    /// 格式化金额
+    /// 格式化货币金额
     /// - Parameters:
     ///   - value: 金额值
-    ///   - numberStyle: NumberFormatter.Style类型，表示格式化格式
     /// - Returns: 格式化后的值
-    static func priceBy(value: Double, numberStyle: NumberFormatter.Style = .currency) -> String {
+    static func priceBy(value: Double) -> String {
         let amountFormatter = NumberFormatter.init()
-        amountFormatter.numberStyle = numberStyle
+        amountFormatter.numberStyle = .currency
+        amountFormatter.locale = .current
         return amountFormatter.string(from: NSNumber.init(value: value)) ?? ""
     }
         
-    /// 格式化人名币金额，不显示羊角符
+    /// 格式化货币，不显示货币符号
     /// - Parameter value: 金额值
     /// - Returns: 格式化后的值
-    static func price_without_claw(value: Double) -> String {
-        let price = priceBy(value: value)
-        if price.hasPrefix("¥") || price.hasPrefix("￥") {
-            return price[1..<price.count]
-        }
-        return price
+    static func price_without_symbol(value: Double) -> String {
+        let amountFormatter = NumberFormatter.init()
+        amountFormatter.maximumFractionDigits = 2
+        amountFormatter.numberStyle = .decimal
+        return amountFormatter.string(from: NSNumber.init(value: value)) ?? ""
     }
     
     /// 转换double为string
