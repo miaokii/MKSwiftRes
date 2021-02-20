@@ -7,7 +7,7 @@
 
 import UIKit
 
-public class MKScrollController: MKViewController {
+open class MKScrollController: MKViewController {
 
     /// 滑动视图，懒加载
     public lazy var scrollView: UIScrollView = {
@@ -37,13 +37,13 @@ public class MKScrollController: MKViewController {
         return container
     }()
     
-    public override func viewDidLoad() {
+    open override func viewDidLoad() {
         super.viewDidLoad()
         addScrollSubViews()
     }
 
     /// 在该方法添加子视图
-    public func addScrollSubViews() {
+    open func addScrollSubViews() {
         
     }
 }
