@@ -30,6 +30,15 @@ public class MKWTimer: NSObject {
         RunLoop.main.add(timer.timer, forMode: RunLoop.Mode.common)
        return timer
     }
+    
+    public class func scheduledTimer(timeInterval: TimeInterval, repeats: Bool = true, timeClosure: @escaping ()->Void) -> MKWTimer {
+        let timer = MKWTimer()
+        timer.timer = Timer.scheduledTimer(withTimeInterval: timeInterval, repeats: repeats, block: { (_) in
+            timeClosure()
+        })
+        RunLoop.main.add(timer.timer, forMode: RunLoop.Mode.common)
+        return timer
+    }
 
     public func fire() {
        timer.fire()
@@ -42,7 +51,7 @@ public class MKWTimer: NSObject {
     @objc private func timerAction() {
        _ = target.perform(selector)
     }
-
+    
     deinit {
        print("deinit timer")
     }

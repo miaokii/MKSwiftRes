@@ -367,7 +367,7 @@ fileprivate class PopAnimatedTransition:NSObject, UIViewControllerAnimatedTransi
                            delay: 0,
                            usingSpringWithDamping: 1,
                            initialSpringVelocity: 0,
-                           options: .curveEaseOut) {
+                           options: .curveEaseInOut) {
                 self.dismissingClosure?()
             } completion: { (_) in
                 self.dismissedClosure?()
@@ -383,7 +383,7 @@ fileprivate class PopAnimatedTransition:NSObject, UIViewControllerAnimatedTransi
                            delay: 0,
                            usingSpringWithDamping: 1,
                            initialSpringVelocity: 0,
-                           options: .curveLinear) {
+                           options: .curveEaseInOut) {
                 self.presentingClosure?()
             } completion: { (_) in
                 /// 在非交互转场中，动画结束之后需要执行transitionContext.completeTransition(!transitionContext.transitionWasCancelled)（如果动画被取消，传NO）
