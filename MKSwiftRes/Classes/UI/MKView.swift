@@ -7,17 +7,17 @@
 
 import Foundation
 
-public class MKView: UIView {
+open class MKView: UIView {
     
-    override init(frame: CGRect) {
+    public override init(frame: CGRect) {
         super.init(frame: frame)
         setup()
     }
     
-    required init?(coder: NSCoder) {
+    required public init?(coder: NSCoder) {
         super.init(coder: coder)
     }
     
-    public func setup() {}
-    public func set(model: Any) {}
+    open func setup() {}
+    open func set(model: Any) {}
 }

@@ -15,7 +15,7 @@ public extension UIColor {
     /// 一级view颜色，浅色模式是白色，暗黑模式是反色
     static var view_l1: UIColor = .for(light: .white)
     /// 二级view颜色，浅色模式0xf7f7f7，暗黑模式0x000000
-    static let view_l2: UIColor = UIColor.for(light: .init(0xf7f7f7), dark: .init(0x000000))
+    static let view_l2: UIColor = UIColor.for(light: .init(0xf7f7f7), dark: .init(0x1C1C1E))
     
     /// 一级文字颜色，浅色模式黑色，暗黑模式是0x999999
     static let text_l1 = UIColor.for(light: .black, dark: .init(0x999999))
