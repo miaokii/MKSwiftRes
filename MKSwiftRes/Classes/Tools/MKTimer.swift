@@ -27,7 +27,7 @@ public class MKWTimer: NSObject {
        timer.target = aTarget
        timer.selector = aSelector
        timer.timer = Timer.scheduledTimer(timeInterval: ti, target: timer, selector: #selector(MKWTimer.timerAction), userInfo: userInfo, repeats: yesOrNo)
-        RunLoop.main.add(timer.timer, forMode: RunLoop.Mode.common)
+        RunLoop.main.add(timer.timer, forMode: RunLoopMode.commonModes)
        return timer
     }
     
@@ -36,7 +36,7 @@ public class MKWTimer: NSObject {
         timer.timer = Timer.scheduledTimer(withTimeInterval: timeInterval, repeats: repeats, block: { (_) in
             timeClosure()
         })
-        RunLoop.main.add(timer.timer, forMode: RunLoop.Mode.common)
+        RunLoop.main.add(timer.timer, forMode: RunLoopMode.commonModes)
         return timer
     }
 

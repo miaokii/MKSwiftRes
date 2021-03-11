@@ -122,7 +122,7 @@ open class MKBasePopController: UIViewController {
             
             var h: CGFloat = 0, w: CGFloat = 0
             if contentView.size == .zero {
-                let layoutSize = contentView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
+                let layoutSize = contentView.systemLayoutSizeFitting(UILayoutFittingCompressedSize)
                 h = layoutSize.height
                 w = layoutSize.width
             } else {
